@@ -1,0 +1,9 @@
+# udev rules for Rabbit R1 USB access without root.
+#
+# Install: sudo cp 99-r1control.rules /etc/udev/rules.d/
+# Reload:  sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+# After installing, unplug and replug your R1.
+
+# Rabbit R1 (MediaTek USB)
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="2304", MODE="0666", GROUP="plugdev"

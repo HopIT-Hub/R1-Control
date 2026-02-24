@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=R1 Control
+Comment=Control your Rabbit R1 over USB
+Exec=r1control
+Icon=icon
+Categories=Utility;
+Terminal=false

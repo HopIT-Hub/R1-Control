@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>R1 Control — Control your Rabbit R1 from your keyboard</title>
+  <meta name="description" content="A lightweight, native system-tray app that lets you use your Rabbit R1 from your computer. Push-to-talk, swipe, and interact via keyboard shortcut — no phone in hand required.">
+  <meta property="og:title" content="R1 Control">
+  <meta property="og:description" content="Control your Rabbit R1 from the comfort of your keyboard.">
+  <meta property="og:image" content="images/header-image.png">
+  <meta name="theme-color" content="#FF6B2B">
+  <style>
+    :root {
+      --bg:        #0d1117;
+      --bg2:       #161b22;
+      --bg3:       #21262d;
+      --border:    #30363d;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --accent:    #FF6B2B;
+      --accent-lt: #ff8c57;
+      --green:     #3fb950;
+      --radius:    10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,17,23,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 56px;
+    }
+    .nav-brand {
+      font-weight: 700; font-size: 1.05rem;
+      color: var(--text); display: flex; align-items: center; gap: .5rem;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: .9rem; transition: color .15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: .35rem 1rem; border-radius: 6px;
+      font-size: .85rem; font-weight: 600;
+      transition: background .15s;
+    }
+    .nav-cta:hover { background: var(--accent-lt) !important; text-decoration: none !important; }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 960px; margin: 0 auto;
+      padding: 3.5rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+    .hero img {
+      width: 100%; max-width: 860px;
+      border-radius: var(--radius);
+    }
+
+    /* ── BADGES ── */
+    .badges {
+      display: flex; flex-wrap: wrap; gap: .6rem;
+      justify-content: center; margin-top: 1.8rem;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 6px; padding: .3rem .8rem;
+      font-size: .8rem; color: var(--muted);
+    }
+    .badge .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+
+    /* ── SECTIONS ── */
+    section { max-width: 960px; margin: 0 auto; padding: 3rem 1.5rem; }
+    section + section { border-top: 1px solid var(--border); }
+    h2 {
+      font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;
+      color: var(--text);
+    }
+    h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: .5rem; color: var(--text); }
+    p { color: var(--muted); margin-bottom: .75rem; }
+
+    /* ── FEATURES ── */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .feature-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem;
+      transition: border-color .2s;
+    }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-icon { font-size: 1.5rem; margin-bottom: .6rem; }
+    .feature-card h3 { font-size: .95rem; }
+    .feature-card p { font-size: .88rem; margin: 0; }
+
+    /* ── DOWNLOAD ── */
+    .dl-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    @media (max-width: 720px) {
+      .dl-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 400px) {
+      .dl-grid { grid-template-columns: 1fr; }
+    }
+    .dl-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      text-align: center; transition: border-color .2s, transform .2s;
+    }
+    .dl-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .dl-icon { font-size: 2.2rem; margin-bottom: .5rem; }
+    .dl-card h3 { font-size: 1rem; margin-bottom: .25rem; }
+    .dl-card .dl-sub { font-size: .8rem; color: var(--muted); margin-bottom: 1rem; }
+    .dl-btn {
+      display: inline-block;
+      background: var(--accent); color: #fff;
+      padding: .5rem 1.2rem; border-radius: 6px;
+      font-size: .88rem; font-weight: 600;
+      transition: background .15s;
+    }
+    .dl-btn:hover { background: var(--accent-lt); text-decoration: none; }
+
+    /* ── TABS (Install) ── */
+    .tabs { margin-top: 1.5rem; }
+    .tab-btns { display: flex; gap: .5rem; margin-bottom: 0; }
+    .tab-btn {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-bottom: none; border-radius: 6px 6px 0 0;
+      padding: .45rem 1.1rem; font-size: .88rem; color: var(--muted);
+      cursor: pointer; transition: color .15s, background .15s;
+    }
+    .tab-btn.active { background: var(--bg2); color: var(--text); border-color: var(--border); }
+    .tab-panel {
+      display: none;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 0 var(--radius) var(--radius) var(--radius);
+      padding: 1.5rem 1.75rem;
+    }
+    .tab-panel.active { display: block; }
+    .tab-panel ol { padding-left: 1.4rem; color: var(--muted); }
+    .tab-panel ol li { margin-bottom: .6rem; font-size: .92rem; }
+    .tab-panel ol li strong { color: var(--text); }
+
+    /* ── CODE ── */
+    pre, code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    }
+    pre {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 1rem 1.25rem;
+      overflow-x: auto; font-size: .82rem;
+      color: #a5d6ff; margin: .75rem 0;
+    }
+    code {
+      background: var(--bg3); padding: .15em .35em;
+      border-radius: 4px; font-size: .85em; color: #a5d6ff;
+    }
+    pre code { background: none; padding: 0; font-size: inherit; color: inherit; }
+
+    /* ── CONFIG TABLE ── */
+    .config-table {
+      width: 100%; border-collapse: collapse;
+      margin-top: 1rem; font-size: .88rem;
+    }
+    .config-table th {
+      text-align: left; padding: .6rem 1rem;
+      background: var(--bg3); color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .config-table td {
+      padding: .65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted); vertical-align: top;
+    }
+    .config-table td:first-child { color: #a5d6ff; font-family: 'SF Mono','Fira Code',monospace; }
+    .config-table tr:last-child td { border-bottom: none; }
+
+    /* ── SHORTCUTS ── */
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: .75rem; margin-top: 1rem;
+    }
+    .shortcut-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: .75rem 1rem;
+    }
+    .shortcut-action { font-size: .88rem; color: var(--muted); }
+    .shortcut-keys { display: flex; gap: .3rem; }
+    kbd {
+      display: inline-block;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-bottom: 3px solid var(--border);
+      border-radius: 4px; padding: .2rem .5rem;
+      font-family: 'SF Mono','Fira Code',monospace;
+      font-size: .75rem; color: var(--text);
+    }
+
+    /* ── KO-FI ── */
+    .kofi-section {
+      text-align: center; padding: 3.5rem 1.5rem;
+    }
+    .kofi-section h2 { margin-bottom: .5rem; }
+    .kofi-section p { max-width: 480px; margin: 0 auto 1.5rem; }
+    .kofi-btn {
+      display: inline-block;
+      background: #FF5E5B; color: #fff;
+      padding: .7rem 2rem; border-radius: 8px;
+      font-size: 1rem; font-weight: 700;
+      transition: background .15s, transform .15s;
+    }
+    .kofi-btn:hover { background: #ff7a78; text-decoration: none; transform: translateY(-1px); }
+    .kofi-btn::before { content: "☕ "; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem; text-align: center;
+      color: var(--muted); font-size: .82rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: .5rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      h2 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-brand">R1 <span>Control</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#download">Download</a>
+    <a href="#install">Install</a>
+    <a href="#config">How it works</a>
+    <a href="#usage">Usage</a>
+    <a href="https://github.com/HopIT-Hub/R1-Control" class="nav-cta">GitHub →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div class="hero">
+  <img src="images/header-image.png" alt="R1 Control — Control your Rabbit R1 from the comfort of your keyboard">
+  <div class="badges">
+    <span class="badge"><span class="dot" style="background:#3fb950"></span> Source Available</span>
+    <span class="badge">🍎 macOS Apple Silicon · Intel</span>
+    <span class="badge">🪟 Windows x64</span>
+    <span class="badge">🐧 Linux x64</span>
+    <span class="badge">🐹 Go · CGO · libusb</span>
+  </div>
+</div>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <h2>Everything you need, nothing you don't.</h2>
+  <p>R1 Control is a lean, native app — no Electron, no subscription, no cloud middleman.</p>
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎙️</div>
+      <h3>Push-to-Talk</h3>
+      <p>Tap a hotkey to toggle PTT, or hold it to talk. Just like using the R1 itself — but from your keyboard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⬅️</div>
+      <h3>Swipe Control</h3>
+      <p>Trigger left and right swipes from the keyboard. Cycle through your R1's screens without touching it.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <h3>Native Tray App</h3>
+      <p>Lives quietly in your menu bar or system tray. Always available, never in the way.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔌</div>
+      <h3>USB Direct</h3>
+      <p>Communicates over USB using the AOA protocol. Fast, reliable, and works without Wi-Fi.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>Cross-Platform</h3>
+      <p>Native builds for macOS (Apple Silicon &amp; Intel), Windows, and Linux.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🪶</div>
+      <h3>Lightweight</h3>
+      <p>Compiled Go binary. Tiny footprint, instant startup, and no runtime dependencies to manage.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── DOWNLOAD ── -->
+<section id="download">
+  <h2>Download</h2>
+  <p>Pre-built binaries for every major platform. No build tools required.</p>
+  <div class="dl-grid">
+    <div class="dl-card">
+      <div class="dl-icon">🍎</div>
+      <h3>macOS</h3>
+      <div class="dl-sub">Apple Silicon (arm64)</div>
+      <a href="https://github.com/HopIT-Hub/R1-Control/releases/latest" class="dl-btn">Download .dmg</a>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">🍎</div>
+      <h3>macOS</h3>
+      <div class="dl-sub">Intel (x86_64)</div>
+      <a href="https://github.com/HopIT-Hub/R1-Control/releases/latest" class="dl-btn">Download .dmg</a>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">🪟</div>
+      <h3>Windows</h3>
+      <div class="dl-sub">64-bit (x64)</div>
+      <a href="https://github.com/HopIT-Hub/R1-Control/releases/latest" class="dl-btn">Download .zip</a>
+    </div>
+    <div class="dl-card">
+      <div class="dl-icon">🐧</div>
+      <h3>Linux</h3>
+      <div class="dl-sub">64-bit (x86_64)</div>
+      <a href="https://github.com/HopIT-Hub/R1-Control/releases/latest" class="dl-btn">Download .AppImage</a>
+    </div>
+  </div>
+  <p style="margin-top:1rem; font-size:.85rem;">
+    All releases are available on the
+    <a href="https://github.com/HopIT-Hub/R1-Control/releases">GitHub Releases page</a>.
+  </p>
+</section>
+
+<!-- ── INSTALL ── -->
+<section id="install">
+  <h2>Installation</h2>
+  <p>Pick your platform below.</p>
+  <div class="tabs">
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="switchTab(event,'tab-mac')">🍎 macOS</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-win')">🪟 Windows</button>
+      <button class="tab-btn" onclick="switchTab(event,'tab-lnx')">🐧 Linux</button>
+    </div>
+    <div id="tab-mac" class="tab-panel active">
+      <ol>
+        <li>Download the <strong>.dmg</strong> for your Mac (Apple Silicon or Intel).</li>
+        <li>Open the <strong>.dmg</strong> and drag <strong>R1 Control</strong> to your Applications folder.</li>
+        <li><strong>First launch only:</strong> right-click the app → <strong>Open</strong> → <strong>Open</strong> to bypass Gatekeeper.</li>
+        <li>The app runs in your menu bar — look for the circle icon <strong>◯</strong>. You're all set!</li>
+      </ol>
+    </div>
+    <div id="tab-win" class="tab-panel">
+      <ol>
+        <li>Download and extract the <strong>.zip</strong>.</li>
+        <li><strong>First time only — install the WinUSB driver</strong> for your R1 using <a href="https://zadig.akeo.ie/" target="_blank">Zadig</a>:
+          <br>Open Zadig → Options → List All Devices → select your R1 → <strong>Install WinUSB</strong>.</li>
+        <li>Run <strong>R1 Control.exe</strong> — the app appears in your system tray.</li>
+        <li>Right-click the tray icon → <strong>Settings</strong> to configure.</li>
+      </ol>
+    </div>
+    <div id="tab-lnx" class="tab-panel">
+      <ol>
+        <li>Download the <strong>.AppImage</strong>.</li>
+        <li>Make it executable and run it:
+          <pre>chmod +x R1-Control-*.AppImage &amp;&amp; ./R1-Control-*.AppImage</pre>
+        </li>
+        <li>For USB access <strong>without sudo</strong>, install the bundled udev rules:
+          <pre>sudo cp 99-r1control.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules &amp;&amp; sudo udevadm trigger</pre>
+        </li>
+        <li>The app appears in your system tray after launch.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ── NO CONFIG ── -->
+<section id="config">
+  <h2>Zero configuration.</h2>
+  <p>R1 Control communicates with the R1 directly over USB using the <strong>Android Open Accessory 2.0 HID protocol</strong> — it registers itself as a keyboard and touchscreen, then sends input events straight to the device.</p>
+  <p>No Rabbit account, no IMEI, no API keys. Just plug in your R1 and launch the app. Settings are created automatically on first run and are accessible any time via the tray icon → <strong>Settings</strong>.</p>
+</section>
+
+<!-- ── USAGE ── -->
+<section id="usage">
+  <h2>Usage</h2>
+  <p>Connect your R1 via USB and launch the app — no setup needed. <strong>Ctrl+Alt+R</strong> talks to your Rabbit R1 — tap to toggle, hold to talk. <strong>Ctrl+Alt+W</strong> lets you switch between Rabbit and OpenClaw, or from Wabbit 🐰 to Wobster 🦞. Default shortcuts:</p>
+  <div class="shortcuts-grid">
+    <div class="shortcut-row">
+      <span class="shortcut-action">Push-to-Talk (tap to toggle / hold to talk)</span>
+      <span class="shortcut-keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>R</kbd></span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-action">Swipe left / right</span>
+      <span class="shortcut-keys"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>W</kbd></span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-action">Open Settings</span>
+      <span class="shortcut-action" style="color:var(--muted); font-style:italic;">Tray icon → Settings</span>
+    </div>
+  </div>
+  <p style="margin-top:1rem; font-size:.88rem;">Shortcuts can be customized in the Settings window.</p>
+</section>
+
+<!-- ── KO-FI ── -->
+<section class="kofi-section">
+  <h2>Support the Project</h2>
+  <p>R1 Control is free for personal use. If it saves you time or makes your R1 more useful, a coffee means a lot!</p>
+  <a href="https://ko-fi.com/hopit" target="_blank" class="kofi-btn">Support on Ko-Fi</a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-links">
+    <a href="https://github.com/HopIT-Hub/R1-Control">GitHub</a>
+    <a href="https://github.com/HopIT-Hub/R1-Control/releases">Releases</a>
+    <a href="https://github.com/HopIT-Hub/R1-Control/issues">Issues</a>
+    <a href="https://ko-fi.com/hopit">Ko-Fi</a>
+    <a href="https://discord.gg/rabbitinc">Rabbit Discord</a>
+  </div>
+  <p>R1 Control is an independent, community-built project. Not affiliated with or endorsed by Rabbit Inc.</p>
+  <p style="margin-top:.4rem;">Free for personal use · <a href="https://github.com/HopIT-Hub/R1-Control/blob/main/LICENSE">License</a> · Built with ❤️ by <a href="https://hopit.co">HopIT</a></p>
+</footer>
+
+<script>
+  function switchTab(e, id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    document.getElementById(id).classList.add('active');
+  }
+</script>
+
+</body>
+</html>

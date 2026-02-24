@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R1 Control Settings</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1><span class="accent">R1</span> Control Settings</h1>
+
+        <div class="status-section">
+            <div class="status-row">
+                <span class="label">Device:</span>
+                <span id="device-status" class="status disconnected">Disconnected</span>
+            </div>
+        </div>
+
+        <div class="hotkey-section">
+            <h2>Push-to-Talk Hotkey</h2>
+            <p class="hint">Short press to toggle PTT on/off. Hold to talk, release to stop.</p>
+
+            <div class="hotkey-display">
+                <span id="current-hotkey" class="hotkey-badge">Ctrl+Alt+R</span>
+            </div>
+
+            <div class="recorder" id="recorder">
+                <button id="record-btn" class="btn btn-primary">Record New Hotkey</button>
+                <div id="recording-overlay" class="recording-overlay hidden">
+                    <div class="recording-prompt">
+                        <div class="pulse-ring"></div>
+                        <p>Press your desired key combination...</p>
+                        <p class="sub">Include at least one modifier (Ctrl, Shift, Alt)</p>
+                        <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+                <div id="preview" class="preview hidden">
+                    <span class="label">New hotkey:</span>
+                    <span id="preview-hotkey" class="hotkey-badge preview-badge"></span>
+                    <div class="preview-actions">
+                        <button id="save-btn" class="btn btn-primary">Save</button>
+                        <button id="discard-btn" class="btn btn-secondary">Discard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hotkey-section">
+            <h2>Swipe Hotkey</h2>
+            <p class="hint">Each press alternates between swipe left and swipe right.</p>
+
+            <div class="hotkey-display">
+                <span id="current-swipe-hotkey" class="hotkey-badge">Ctrl+Alt+W</span>
+            </div>
+
+            <div class="recorder" id="swipe-recorder">
+                <button id="swipe-record-btn" class="btn btn-primary">Record New Hotkey</button>
+                <div id="swipe-recording-overlay" class="recording-overlay hidden">
+                    <div class="recording-prompt">
+                        <div class="pulse-ring"></div>
+                        <p>Press your desired key combination...</p>
+                        <p class="sub">Include at least one modifier (Ctrl, Shift, Alt)</p>
+                        <button id="swipe-cancel-btn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+                <div id="swipe-preview" class="preview hidden">
+                    <span class="label">New hotkey:</span>
+                    <span id="swipe-preview-hotkey" class="hotkey-badge preview-badge"></span>
+                    <div class="preview-actions">
+                        <button id="swipe-save-btn" class="btn btn-primary">Save</button>
+                        <button id="swipe-discard-btn" class="btn btn-secondary">Discard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>General</h2>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Start on Login</span>
+                    <span class="setting-desc">Launch R1 Control automatically when you log in</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autostart-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Keep Awake</h2>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Keep Device Awake</span>
+                    <span class="setting-desc">Send periodic pings to prevent the R1 from sleeping</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="keepawake-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row setting-sub" id="sleep-after-row">
+                <div class="setting-info">
+                    <span class="setting-label">Sleep After Idle</span>
+                    <span class="setting-desc">Let the device sleep after no PTT/swipe activity</span>
+                </div>
+                <select id="sleep-after-select" class="select-input">
+                    <option value="30">30 min</option>
+                    <option value="60">1 hour</option>
+                    <option value="120">2 hours</option>
+                    <option value="180">3 hours</option>
+                    <option value="300">5 hours</option>
+                    <option value="0">Never</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>How it works</h2>
+            <ol>
+                <li>Connect your Rabbit R1 via USB-C</li>
+                <li>Short press the PTT hotkey to toggle, or hold to talk</li>
+                <li>Press the swipe hotkey to navigate left/right</li>
+            </ol>
+            <p class="note">The R1 uses its own microphone. This tool only triggers the PTT button and navigation remotely.</p>
+        </div>
+
+        <div class="version-footer" id="version-footer"></div>
+
+        <div class="credit-footer">
+            <p class="built-with">Built with &#x2665; by HopIT</p>
+            <a href="https://ko-fi.com/hopit" target="_blank" class="kofi-badge">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.03-.99 4.011.123 0 0 1.004-1.158 2.696-.783 1.232.277 2.397 1.168 2.36 2.823-.024.828-.367 1.386-.513 1.612zm9.299.013c-.505 1.096-1.744 1.319-1.744 1.319l-1.628.182 1.195-3.468s1.324-.06 2.126.468c.741.487.705 1.374.051 1.499z"/>
+                </svg>
+                Support on Ko-Fi
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

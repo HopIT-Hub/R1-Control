@@ -1,0 +1,25 @@
+config.json
+bin/
+*.wav
+response_audio.wav
+.DS_Store
+
+# Build outputs
+r1ptt-tray
+r1ptt-darwin-*
+r1ptt-windows-*
+r1ptt-linux-*
+r1ptt
+r1diag
+
+# Packaging outputs
+*.dmg
+*.AppImage
+*.zip
+R1 Control.app/
+R1Control.AppDir/
+appimagetool-*.AppImage
+
+# Windows resource embedding
+cmd/tray/winres/icon.ico
+cmd/tray/*.syso

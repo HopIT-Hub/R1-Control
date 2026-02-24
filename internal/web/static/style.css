@@ -1,0 +1,406 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #0d0d0d;
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 480px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+h1 .accent { color: #FF6B2B; }
+
+h2 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.85rem;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* ── Cards ── */
+.status-section,
+.hotkey-section,
+.settings-section,
+.info-section {
+    background: #141414;
+    border: 1px solid #242424;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* ── Status ── */
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.label {
+    color: #555;
+    font-size: 0.875rem;
+}
+
+.status {
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+}
+
+.status.disconnected {
+    background: rgba(255, 255, 255, 0.05);
+    color: #555;
+}
+
+.status.connected {
+    background: rgba(63, 185, 80, 0.12);
+    color: #3fb950;
+}
+
+.status.ptt_active {
+    background: rgba(255, 107, 43, 0.18);
+    color: #FF6B2B;
+}
+
+/* ── Hotkey ── */
+.hint {
+    color: #555;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.hotkey-display {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.hotkey-badge {
+    display: inline-block;
+    background: #1a1a1a;
+    border: 1px solid #FF6B2B;
+    color: #FF6B2B;
+    font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+}
+
+.preview-badge {
+    background: rgba(255, 107, 43, 0.1);
+    border-color: rgba(255, 107, 43, 0.5);
+    color: #ff8c57;
+}
+
+.recorder {
+    text-align: center;
+    position: relative;
+}
+
+/* ── Recording overlay ── */
+.recording-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.recording-prompt {
+    text-align: center;
+}
+
+.recording-prompt p {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #f0f0f0;
+}
+
+.recording-prompt .sub {
+    font-size: 0.8rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.pulse-ring {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 107, 43, 0.15);
+    border: 2px solid rgba(255, 107, 43, 0.4);
+    margin: 0 auto 1.5rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1);   opacity: 0.5; }
+    50%       { transform: scale(1.3); opacity: 1;   }
+}
+
+.preview {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(255, 107, 43, 0.06);
+    border: 1px solid rgba(255, 107, 43, 0.18);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ── Buttons ── */
+.btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+
+.btn-primary {
+    background: #FF6B2B;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #e85e22;
+}
+
+.btn-secondary {
+    background: #1e1e1e;
+    border: 1px solid #2e2e2e;
+    color: #888;
+}
+
+.btn-secondary:hover {
+    background: #272727;
+    color: #bbb;
+}
+
+/* ── Info section ── */
+.info-section ol {
+    padding-left: 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.info-section li {
+    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    color: #888;
+}
+
+.note {
+    font-size: 0.75rem;
+    color: #444;
+    font-style: italic;
+}
+
+/* ── Settings rows ── */
+.setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting-row.setting-sub {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #1f1f1f;
+    transition: opacity 0.2s;
+}
+
+.setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.setting-label {
+    font-size: 0.9rem;
+    color: #e0e0e0;
+    font-weight: 500;
+}
+
+.setting-desc {
+    font-size: 0.75rem;
+    color: #555;
+}
+
+/* ── Toggle switch ── */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 24px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: #555;
+    border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: rgba(255, 107, 43, 0.2);
+    border-color: rgba(255, 107, 43, 0.4);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+    background: #FF6B2B;
+}
+
+/* ── Select ── */
+.select-input {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid #2e2e2e;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+    flex-shrink: 0;
+    transition: border-color 0.15s;
+}
+
+.select-input:focus {
+    border-color: #FF6B2B;
+}
+
+/* ── Footer ── */
+.version-footer {
+    text-align: center;
+    padding: 1.5rem 0 0.5rem;
+    font-size: 0.7rem;
+    color: #333;
+}
+
+.credit-footer {
+    text-align: center;
+    padding: 0.25rem 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.built-with {
+    font-size: 0.7rem;
+    color: #444;
+}
+
+.kofi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: #000;
+    border: 1px solid #242424;
+    color: #666;
+    text-decoration: none;
+    padding: 0.35rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.kofi-badge:hover {
+    border-color: #FF6B2B;
+    color: #FF6B2B;
+}
+
+.kofi-badge svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+/* ── Toast ── */
+.toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #FF6B2B;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: fadeInOut 2.5s ease-in-out;
+    z-index: 200;
+}
+
+.toast.error {
+    background: #c0392b;
+}
+
+@keyframes fadeInOut {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(10px);  }
+    15%  { opacity: 1; transform: translateX(-50%) translateY(0);      }
+    85%  { opacity: 1; transform: translateX(-50%) translateY(0);      }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px);  }
+}

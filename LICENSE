@@ -1,0 +1,95 @@
+HopIT Noncommercial License
+Version 1.0
+
+Copyright (c) 2026 HopIT (https://hopit.co)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TERMS AND CONDITIONS
+
+1. Definitions
+
+   "Software" means the R1 Control source code, binaries, documentation,
+   and all associated files in this repository.
+
+   "Internal Use" means running or using the Software for personal or
+   internal business purposes — including use by employees, contractors,
+   or developers on work machines or in a work context — where the
+   Software is not distributed to end users outside your organization
+   and is not incorporated into a product or service offered to others.
+
+   "Commercial Distribution" means distributing, selling, licensing,
+   sublicensing, or providing access to the Software — or any product,
+   service, or tool that incorporates it — to third parties in exchange
+   for revenue, compensation, or commercial advantage.
+
+   "Closed-Source Distribution" means distributing the Software, or
+   any derivative work, without making the complete corresponding
+   source code publicly available under the terms of this License.
+
+2. Grant of Rights
+
+   Subject to the conditions in Section 3, HopIT grants you a
+   worldwide, royalty-free, non-exclusive license to:
+
+   a. Use and run the Software for any purpose, including Internal Use
+      in a personal or commercial/professional setting.
+      (Example: a developer running R1 Control at their desk at work
+      is explicitly permitted at no cost.)
+
+   b. Modify the Software and create derivative works.
+
+   c. Distribute the Software or derivative works, provided that:
+      i.  This License and the original copyright notice are preserved
+          in all copies and substantial portions.
+      ii. Any publicly distributed derivative work is made available
+          under the terms of this License (same license, open source).
+      iii.The following attribution is clearly displayed in the
+          product, documentation, or About screen:
+          "Based on R1 Control by HopIT (https://hopit.co)"
+
+3. Restrictions
+
+   The following require a separate written Commercial License
+   Agreement from HopIT:
+
+   a. Commercial Distribution — packaging, bundling, or incorporating
+      the Software into a product or service offered to third parties,
+      whether for payment or as part of a commercial offering.
+      (Example: shipping R1 Control inside your own app, or offering
+      it as part of a paid service, requires a commercial license.)
+
+   b. Closed-Source Distribution — distributing the Software or a
+      derivative work without releasing the full source code under
+      this License.
+
+   c. Removing or obscuring this License, the copyright notice, or
+      the attribution requirement in Section 2(c)(iii).
+
+4. Commercial Licensing
+
+   To use this Software in a way not permitted by Section 2, obtain
+   a Commercial License from HopIT.
+
+   Contact: licensing@hopit.co
+
+5. No Warranty
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+   NONINFRINGEMENT. IN NO EVENT SHALL HOPIT BE LIABLE FOR ANY
+   CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF
+   THE SOFTWARE.
+
+6. Termination
+
+   Your rights under this License terminate automatically if you
+   violate any of its terms. Upon termination, you must cease all
+   use and distribution of the Software and destroy all copies in
+   your possession.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For commercial licensing inquiries: licensing@hopit.co
+For more information: https://hopit.co

@@ -1,0 +1,213 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Install arm64 dependencies
+        run: brew install libusb create-dmg
+
+      - name: Install x86_64 libusb for cross-compilation
+        run: |
+          arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
+          arch -x86_64 /usr/local/bin/brew install libusb
+
+      - name: Build arm64 binary
+        run: |
+          CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 \
+            go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
+            -o r1ptt-darwin-arm64 ./cmd/tray
+
+      - name: Build amd64 binary
+        run: |
+          CGO_ENABLED=1 GOOS=darwin GOARCH=amd64 \
+            CC="clang -arch x86_64" \
+            CGO_CFLAGS="-I/usr/local/include" \
+            CGO_LDFLAGS="-L/usr/local/lib -lusb-1.0" \
+            go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
+            -o r1ptt-darwin-amd64 ./cmd/tray
+
+      - name: Build arm64 .app bundle and .dmg
+        run: ./packaging/macos/build.sh r1ptt-darwin-arm64 "${{ github.ref_name }}" arm64
+
+      - name: Build amd64 .app bundle and .dmg
+        run: |
+          rm -rf "R1 Control.app"
+          ./packaging/macos/build.sh r1ptt-darwin-amd64 "${{ github.ref_name }}" amd64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: "R1-Control-*-macos-arm64.dmg"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-amd64
+          path: "R1-Control-*-macos-amd64.dmg"
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Install pkg-config
+        run: choco install pkgconfiglite -y --no-progress
+
+      - name: Install libusb (MinGW-compatible)
+        shell: bash
+        run: |
+          # Official libusb Windows binary release includes MinGW64 static build
+          curl -fsSL -o libusb.7z \
+            https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.7z
+          7z x libusb.7z -olibusb-win
+
+          # Locate files regardless of top-level directory structure in archive
+          HEADER=$(find libusb-win -name "libusb.h" | head -1)
+          STATIC=$(find libusb-win -name "libusb-1.0.a" -path "*/MinGW64/static/*" | head -1)
+          echo "Header: $HEADER"
+          echo "Static: $STATIC"
+
+          mkdir -p /c/libusb/include/libusb-1.0 /c/libusb/lib/pkgconfig
+          cp "$HEADER" /c/libusb/include/libusb-1.0/
+          cp "$STATIC" /c/libusb/lib/
+
+          # Write pkg-config file so CGO can find libusb
+          {
+            echo 'prefix=/c/libusb'
+            echo 'exec_prefix=${prefix}'
+            echo 'libdir=${exec_prefix}/lib'
+            echo 'includedir=${prefix}/include'
+            echo ''
+            echo 'Name: libusb-1.0'
+            echo 'Description: USB library'
+            echo 'Version: 1.0.27'
+            echo 'Libs: -L${libdir} -lusb-1.0'
+            echo 'Cflags: -I${includedir}/libusb-1.0'
+          } > /c/libusb/lib/pkgconfig/libusb-1.0.pc
+
+          # Export for subsequent steps
+          echo "PKG_CONFIG_PATH=/c/libusb/lib/pkgconfig" >> "$GITHUB_ENV"
+
+      - name: Install go-winres
+        run: go install github.com/tc-hib/go-winres@latest
+
+      - name: Generate Windows resources
+        shell: bash
+        run: |
+          cd cmd/tray && go-winres simply \
+            --manifest gui \
+            --icon ../../assets/icon.png \
+            --product-name "R1 Control" \
+            --file-description "Rabbit R1 USB Controller" \
+            --copyright "Copyright (c) 2026 HopIT (hopit.co)"
+
+      - name: Build binary
+        shell: bash
+        run: |
+          CGO_ENABLED=1 \
+            go build -ldflags="-s -w -X main.version=${{ github.ref_name }} -H windowsgui" \
+            -o r1ptt-windows-amd64.exe ./cmd/tray
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          .\packaging\windows\build.ps1 -Binary r1ptt-windows-amd64.exe -Version "${{ github.ref_name }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-amd64
+          path: "*.zip"
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libusb-1.0-0-dev libx11-dev libfuse2
+
+      - name: Build binary
+        run: |
+          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
+            go build -ldflags="-s -w -X main.version=${{ github.ref_name }}" \
+            -o r1ptt-linux-amd64 ./cmd/tray
+
+      - name: Build AppImage
+        run: ./packaging/linux/build.sh r1ptt-linux-amd64 "${{ github.ref_name }}"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-amd64
+          path: |
+            R1-Control-*.AppImage
+            packaging/linux/99-r1control.rules
+
+  release:
+    needs: [build-macos, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          body: |
+            ## Installation
+
+            ### macOS
+            1. Download the `.dmg` for your Mac (**Apple Silicon** or **Intel**)
+            2. Open the `.dmg` and drag **R1 Control** to Applications
+            3. First launch: right-click the app → **Open** → **Open** (bypasses Gatekeeper)
+            4. The app runs in your menu bar — look for the circle icon
+
+            ### Windows
+            1. Download and extract the `.zip`
+            2. First time: install the WinUSB driver for your R1 using [Zadig](https://zadig.akeo.ie/)
+               - Open Zadig → Options → List All Devices → select your R1 → Install WinUSB
+            3. Run `R1 Control.exe` — the app appears in your system tray
+
+            ### Linux
+            1. Download the `.AppImage`
+            2. `chmod +x R1-Control-*.AppImage && ./R1-Control-*.AppImage`
+            3. For USB access without root, install the udev rules:
+               ```
+               sudo cp 99-r1control.rules /etc/udev/rules.d/
+               sudo udevadm control --reload-rules && sudo udevadm trigger
+               ```
+
+            ### Usage
+            - **PTT**: Press `Ctrl+Alt+R` (short press toggles, hold to talk)
+            - **Swipe**: Press `Ctrl+Alt+W` (alternates left/right)
+            - **Settings**: Click the tray icon → Settings
+          files: |
+            artifacts/macos-arm64/*
+            artifacts/macos-amd64/*
+            artifacts/windows-amd64/*
+            artifacts/linux-amd64/*

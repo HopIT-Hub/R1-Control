@@ -1,0 +1,39 @@
+{
+    "RT_GROUP_ICON": {
+        "APP": {
+            "0000": "icon.ico"
+        }
+    },
+    "RT_MANIFEST": {
+        "#1": {
+            "0409": {
+                "identity": {
+                    "name": "R1Control",
+                    "version": "0.0.0.0"
+                },
+                "description": "R1 Control - Rabbit R1 USB Controller",
+                "minimum-os": "win7",
+                "dpi-awareness": "system"
+            }
+        }
+    },
+    "VS_VERSION_INFO": {
+        "#1": {
+            "0409": {
+                "fixed": {
+                    "file_version": "0.0.0.0",
+                    "product_version": "0.0.0.0"
+                },
+                "info": {
+                    "0409": {
+                        "ProductName": "R1 Control",
+                        "FileDescription": "Rabbit R1 USB Controller",
+                        "CompanyName": "HopIT",
+                        "LegalCopyright": "Copyright (c) 2026 HopIT (hopit.co)",
+                        "OriginalFilename": "R1 Control.exe"
+                    }
+                }
+            }
+        }
+    }
+}
